@@ -1,6 +1,6 @@
 #pragma once
-#include "atlimage.h"
-
+//#include "atlimage.h"
+//#include "pch.h"
 #include <complex>
 using namespace std;
 

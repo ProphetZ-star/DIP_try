@@ -11,7 +11,7 @@
 #endif
 
 #include "tryDoc.h"
-
+#include "Dib.h"
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -30,12 +30,21 @@ END_MESSAGE_MAP()
 
 CtryDoc::CtryDoc() noexcept
 {
-	// TODO: 在此添加一次性构造代码
-
+	// TODO: Doc中的m_pDib变量和恢复变量m_pBuffer置空
+	m_pDib = NULL;
+	m_pBuffer = NULL;
 }
 
 CtryDoc::~CtryDoc()
 {
+	if (m_pDib != NULL) {
+		delete m_pDib;
+		m_pDib = NULL;
+	}
+	if (m_pBuffer != NULL) {
+		delete m_pBuffer;
+		m_pBuffer = NULL;
+	}
 }
 
 BOOL CtryDoc::OnNewDocument()
@@ -136,3 +145,26 @@ void CtryDoc::Dump(CDumpContext& dc) const
 
 
 // CtryDoc 命令
+
+
+BOOL CtryDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
+
+	// TODO:  在此添加您专用的创建代码
+	if (m_pDib != NULL) {
+		delete m_pDib;
+		m_pDib = NULL;
+	}
+	if (m_pBuffer != NULL)
+	{
+		delete m_pBuffer;
+		m_pBuffer = NULL;
+	}
+	m_pDib = new CDib;
+	m_pDib->LoadFile(lpszPathName);
+	m_pBuffer = new CDib(*m_pDib);
+	UpdateAllViews(NULL);
+	return TRUE;
+}

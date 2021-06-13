@@ -5,7 +5,7 @@
 
 #pragma once
 
-
+class CDib;
 class CtryDoc : public CDocument
 {
 protected: // 仅从序列化创建
@@ -45,4 +45,8 @@ protected:
 	// 用于为搜索处理程序设置搜索内容的 Helper 函数
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	CDib* m_pDib;
+	CDib* m_pBuffer;
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 };

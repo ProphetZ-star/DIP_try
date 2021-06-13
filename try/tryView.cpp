@@ -12,7 +12,7 @@
 
 #include "tryDoc.h"
 #include "tryView.h"
-
+#include "Dib.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -51,7 +51,7 @@ BOOL CtryView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CtryView 绘图
 
-void CtryView::OnDraw(CDC* /*pDC*/)
+void CtryView::OnDraw(CDC* pDC)
 {
 	CtryDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
@@ -59,6 +59,9 @@ void CtryView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
+	if (pDoc->m_pDib != NULL) {
+		pDoc->m_pDib->Draw(pDC->m_hDC, 0, 0);
+	}
 }
 
 
