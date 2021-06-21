@@ -2,6 +2,8 @@
 //#include "atlimage.h"
 //#include "pch.h"
 #include <complex>
+#include<fstream>
+#include <iostream>
 using namespace std;
 
 #define  MAX_SIZE 1000
@@ -46,5 +48,7 @@ private:
 	
 private:
 	long *m_pGrayValueCount;
+public:
+	void LoadRAW(LPCTSTR lpszPathName, int width, int height, int deepth);
 };
 

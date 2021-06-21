@@ -23,6 +23,9 @@
 IMPLEMENT_DYNCREATE(CtryDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CtryDoc, CDocument)
+	ON_COMMAND(Restore, &CtryDoc::OnRestore)
+//	ON_COMMAND(ID_CT32773, &CtryDoc::OnCt32773)
+//ON_COMMAND(ID_32772, &CtryDoc::OnLOAD_RAW)
 END_MESSAGE_MAP()
 
 
@@ -33,6 +36,10 @@ CtryDoc::CtryDoc() noexcept
 	// TODO: Doc中的m_pDib变量和恢复变量m_pBuffer置空
 	m_pDib = NULL;
 	m_pBuffer = NULL;
+	width = 0;
+	height = 0;
+	deepth = 0;
+	layer = 0;
 }
 
 CtryDoc::~CtryDoc()
@@ -149,10 +156,10 @@ void CtryDoc::Dump(CDumpContext& dc) const
 
 BOOL CtryDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
+	//GetFileExt();
 	if (!CDocument::OnOpenDocument(lpszPathName))
 		return FALSE;
 
-	// TODO:  在此添加您专用的创建代码
 	if (m_pDib != NULL) {
 		delete m_pDib;
 		m_pDib = NULL;
@@ -162,9 +169,55 @@ BOOL CtryDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		delete m_pBuffer;
 		m_pBuffer = NULL;
 	}
-	m_pDib = new CDib;
-	m_pDib->LoadFile(lpszPathName);
-	m_pBuffer = new CDib(*m_pDib);
-	UpdateAllViews(NULL);
+
+	CString ext(lpszPathName);
+	int n = ext.ReverseFind('.');
+	ext = ext.Right(ext.GetLength() - n - 1);
+	if (ext == "raw") {
+		LOAD_P dlg(this);
+		dlg.DoModal();
+		m_pDib = new CDib;
+		m_pDib->LoadRAW(lpszPathName, width, height, deepth);
+
+	}
+	else {
+		m_pDib = new CDib;
+		m_pDib->LoadFile(lpszPathName);
+		m_pBuffer = new CDib(*m_pDib);
+		UpdateAllViews(NULL);
+	}
 	return TRUE;
 }
+
+
+void CtryDoc::OnRestore()
+{
+	// TODO: 图像恢复
+	if (m_pDib != NULL)
+	{
+		delete m_pDib;
+		m_pDib = NULL;
+	}
+	if (m_pBuffer != NULL)
+	{
+		m_pDib = new CDib(*m_pBuffer);
+	}
+	UpdateAllViews(NULL);
+}
+
+
+//void CtryDoc::OnCt32773()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//	if (m_pDib != NULL) {
+//		LOAD_P dlg(this);
+//		dlg.DoModal();
+//	}
+//}
+
+
+//void CtryDoc::OnLOAD_RAW()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//
+//}

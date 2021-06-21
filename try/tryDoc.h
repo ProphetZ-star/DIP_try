@@ -4,7 +4,8 @@
 
 
 #pragma once
-
+#include "resource.h"
+#include "LOAD_P.h"
 class CDib;
 class CtryDoc : public CDocument
 {
@@ -48,5 +49,12 @@ protected:
 public:
 	CDib* m_pDib;
 	CDib* m_pBuffer;
+	int width;
+	int height;
+	int deepth;
+	int layer;
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	afx_msg void OnRestore();
+//	afx_msg void OnCt32773();
+//	afx_msg void OnLOAD_RAW();
 };

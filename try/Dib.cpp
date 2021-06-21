@@ -38,6 +38,7 @@ CDib::CDib( CDib &Dib ):m_pDibBits(NULL),m_pGrayValueCount(NULL)
 	memcpy(m_pDibBits,Dib.m_pDibBits,m_nHeight*m_nWidthBytes);
 }
 
+
 CDib::~CDib(void)
 {
 	m_pDibBits = NULL;
@@ -48,15 +49,61 @@ CDib::~CDib(void)
 	}
 }
 
+
 void CDib::LoadFile( LPCTSTR lpszPathName )
 {
 	Load(lpszPathName);
 	m_nWidth = GetWidth();
 	m_nHeight = GetHeight();
-	m_nWidthBytes =abs(GetPitch()) ;
+	m_nWidthBytes =abs(GetPitch());
 	m_nBitCount = GetBPP();
 	m_pDibBits = (unsigned char*)GetBits()+(m_nHeight-1)*GetPitch();
 }
+
+
+void CDib::LoadRAW(LPCTSTR lpszPathName,int width,int height,int deepth)
+{
+	// TODO: 在此处添加实现代码.
+	//Load(lpszPathName);
+	Create(width, height, 8, 0);
+	m_nWidth = GetWidth();
+	m_nHeight = GetHeight();
+	m_nWidthBytes = abs(GetPitch());
+	m_nBitCount = GetBPP();
+	m_pDibBits = (unsigned char*)GetBits() + (m_nHeight - 1)*GetPitch();
+	int x = 0, y = 0;
+	unsigned char*	lpSrc = NULL;
+	BYTE *pixel = NULL;
+	pixel = new BYTE[width*height*(int)round((double)deepth/8)];//读取文件
+	ifstream Rawin(lpszPathName, ios::binary);
+	//Rawin = fopen(lpszPathName, "rb");
+	//fseek(Rawin, 0L, SEEK_END);//定位到结尾
+	if (!Rawin) {
+		cerr << "Open file error!" << endl;
+	}
+	int d = (int)round((double)deepth / 8);
+	Rawin.read((char*)(pixel), width*height*(int)round((double)deepth / 8));
+	int nColors = 256;
+	RGBQUAD *pal = new RGBQUAD[nColors];
+	for (int i = 0; i < nColors; ++i) {
+		pal[i].rgbBlue = i;
+		pal[i].rgbRed = i;
+		pal[i].rgbGreen = i;
+	}
+	SetColorTable(0, nColors, pal);
+	for (y = 0; y < m_nHeight; ++y) {
+		for (x = 0; x < m_nWidth; ++x) {
+			lpSrc = (unsigned char*)m_pDibBits + m_nWidth * (m_nHeight-y-1) + x;
+			int temp = pixel[(y*m_nWidth + x) * 2]*16*16;
+			temp += pixel[(y*m_nWidth + x) * 2 + 1];
+			temp = temp / (16);
+			*lpSrc = temp;
+		}
+	}
+	delete[] pixel;
+	delete[] pal;
+}
+
 
 void CDib::Invert()
 {
@@ -68,6 +115,7 @@ void CDib::Invert()
 		}
 	}
 }
+
 
 long* CDib::GrayValueCount()
 {
@@ -294,6 +342,7 @@ void CDib::FFT_1D(complex<double> * pCTData, complex<double> * pCFData, int nLev
 	pCWork2 =	NULL	;
 
 }
+
 /*************************************************************************
  *
  * \函数名称：
@@ -529,3 +578,6 @@ void CDib::IFFT_2D(complex<double> * pCFData, complex<double> * pCTData, int nWi
 	delete pCWork ;
 	pCWork = NULL ;
 }
+
+
+
